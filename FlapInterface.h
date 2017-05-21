@@ -1,7 +1,7 @@
 #ifndef FLAP_INTERFACE_H
 #define FLAP_INTERFACE_H
 
-#include <Arduino.h>
+#include <stdint.h>
 
 class FlapInterface
 {
@@ -24,23 +24,17 @@ class FlapInterface
             this->negpin = negpin;
             this->maxstate = maxstate;
             state = 0;
-            pinMode(pospin, OUTPUT);
-            pinMode(negpin, OUTPUT);
-            kill();
         }
 
         uint8_t deploy()
         {
             if (state == maxstate)
             {
-                kill();
                 return 0;
             }
             else
             {
                 state++;
-                digitalWrite(negpin, LOW);
-                digitalWrite(pospin, HIGH);
                 return 1;
             }
         }
@@ -49,22 +43,13 @@ class FlapInterface
         {
             if (state == 0)
             {
-                kill();
                 return 0;
             }
             else
             {
                 state--;
-                digitalWrite(pospin, LOW);
-                digitalWrite(negpin, HIGH);
                 return 1;
             }
-        }
-
-        void kill()
-        {
-            digitalWrite(pospin, LOW);
-            digitalWrite(negpin, LOW);
         }
 
     private:
