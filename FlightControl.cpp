@@ -46,6 +46,8 @@ double getAltitude(uint8_t measurements)
 
 int main()
 {
+    std::ifstream in(input);
+    std::ofstream out(output);
     LAUNCHPAD_ALT = 0;
     REST_ACCEL = 0;
 
@@ -64,18 +66,18 @@ int main()
     filter.P[1][1] = 100;
 
     double current_time = 0;
-    
+
     std::cout << "time\traw alt\tk alt\traw accel\tk accel\tvel\ts1\ts2\n";
-    
-    while(current_time < 10)
+
+    while(!in.fail())
     {
-    
+
     bool FLAP_STATE = false;
     static double alt_prev;
     double dt, raw_altitude, altitude, raw_accel, accel;
     update_time(&current_time, &dt);
-    raw_altitude = getAltitude(1) - LAUNCHPAD_ALT;
-    raw_accel = getAcceleration(1); // - REST_ACCEL;
+    raw_altitude = getAltitude(in) - LAUNCHPAD_ALT;
+    raw_accel = getAcceleration(in); // - REST_ACCEL;
 
     // filter wizardry to clean up alt and accel data
     filter.F[0][1] = dt * dt;
@@ -163,7 +165,7 @@ int main()
         }
 
         alt_prev = altitude; // save previous altitude for faux derivative
-            
+
         printf("%5.2f\t%5.2f\t%5.2f\t%5.2f\t\t%5.2f\t%5.2f\t%d\t%d\n",
             current_time, raw_altitude, altitude, raw_accel, accel,
             velocity, major_status, minor_status);
