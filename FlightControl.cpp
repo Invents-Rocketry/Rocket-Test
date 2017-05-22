@@ -46,10 +46,11 @@ double getAltitude(uint8_t measurements)
 
 int main()
 {
-    std::ifstream in(input);
-    std::ofstream out(output);
-    LAUNCHPAD_ALT = 0;
+    std::ifstream in_alt("alt");
+    std::ifstream in_accel("accel");
     REST_ACCEL = 0;
+    float raw_altitude;
+    float raw_accel;
 
     // initialize the Kalman filter
     // state transition matrix, F
@@ -69,15 +70,15 @@ int main()
 
     std::cout << "time\traw alt\tk alt\traw accel\tk accel\tvel\ts1\ts2\n";
 
-    while(!in.fail())
+    while(!in_alt.fail() && !in_accel)
     {
+      in_alt>>raw_altitude;
+      in_accel>>raw_accel;
 
     bool FLAP_STATE = false;
     static double alt_prev;
     double dt, raw_altitude, altitude, raw_accel, accel;
     update_time(&current_time, &dt);
-    raw_altitude = getAltitude(in) - LAUNCHPAD_ALT;
-    raw_accel = getAcceleration(in); // - REST_ACCEL;
 
     // filter wizardry to clean up alt and accel data
     filter.F[0][1] = dt * dt;
