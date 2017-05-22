@@ -14,7 +14,7 @@
 
 #define CD_ACTIVE       0.6     // unitless
 
-#define TARGET_ALT      3500    // meters
+#define TARGET_ALT      1050    // meters
 
 #define K_PASSIVE       (0.5 * ATM_DENSITY * CD_PASSIVE * REF_AREA_BODY)
 

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <stdint.h>
+#include <time.h>
 
 /* FLIGHT STATE DEFINITIONS */
 #define ON_LAUNCHPAD                0 // indicates rocket is on the launchpad.
@@ -17,7 +18,7 @@ double REST_ACCEL;                  // acceleration of non-accelerating vehicle
 long int BEGIN_TIME;                // time the main loop begins
 uint8_t stage = ON_LAUNCHPAD;       // current state of the vehicle
 
-KalmanFilter filter(0,0.0001);
+KalmanFilter filter(0,0.01);
 
 /*
  *      __
@@ -37,18 +38,18 @@ void update_time(double* current_time, double* dt)
 
 int main()
 {
+    srand(time(0));
+
     std::ifstream in_alt("altitude.csv");
     std::ifstream in_accel("acceleration.csv");
     REST_ACCEL = 0;
-    float raw_altitude;
-    float raw_accel;
 
     // initialize the Kalman filter
     // state transition matrix, F
     filter.F[0][0] = 1;
     filter.F[1][1] = 1;
     // sensor covariance matrix, R
-    filter.R[0][0] = 0.08;
+    filter.R[0][0] = 0.02;
     filter.R[1][1] = 0.001;
     // state matrix, X
     filter.X[0][0] = 0;
@@ -63,12 +64,16 @@ int main()
 
     while(!in_alt.fail() && !in_accel.fail())
     {
-      in_alt>>raw_altitude;
-      in_accel>>raw_accel;
 
     bool FLAP_STATE = false;
     static double alt_prev;
     double dt, raw_altitude, altitude, raw_accel, accel;
+    
+    in_alt >> raw_altitude;
+    in_accel >> raw_accel;
+    
+    raw_altitude = raw_altitude + (((double) rand() / RAND_MAX) * 2 - 1);
+    
     update_time(&current_time, &dt);
 
     // filter wizardry to clean up alt and accel data
@@ -83,13 +88,13 @@ int main()
     int major_status = 100;
     int minor_status = 0;
     // stage-specific progression logic
-    const uint8_t ticksToAdvance = 0.25/NOMINAL_DT;
+    const uint8_t ticksToAdvance = 5;
     if (stage == ON_LAUNCHPAD)
     {
         static uint8_t high_vel_count;
         if (velocity > 3) high_vel_count++;
         else if (high_vel_count > 0) high_vel_count--;
-        if (high_vel_count > ticksToAdvance) stage++;
+        if (high_vel_count > 2 * ticksToAdvance) stage++;
 
         major_status = ON_LAUNCHPAD;
         minor_status = high_vel_count;
@@ -106,7 +111,7 @@ int main()
         }
         if (stage == APOGEE_COAST)
         {
-        const uint8_t vmin = 8; // minimum velocity for flap control
+        const uint8_t vmin = 15; // minimum velocity for flap control
 
         major_status = APOGEE_COAST;
 
