@@ -1,7 +1,7 @@
 #include "RocketMath.h"             // for Kalman filter, trajectory, and flaps
 #include "Vehicle.h"                // for rocket vehicle characteristics
-
 #include <iostream>
+#include <fstream>
 #include <stdint.h>
 
 /* FLIGHT STATE DEFINITIONS */
@@ -115,23 +115,6 @@ int main()
         }
         if (stage == APOGEE_COAST)
         {
-        /*
-        * alt_next and vel_next are the predicted state of the rocket in
-        * dt seconds, assuming the flaps are deployed, and are found by
-        * solving the following differential equation:
-        *
-        *     dv/dt + (kv^2 / m) + g = 0
-        *
-        * This yields the model found in Equations.h.
-        * ta_predict is the time to apogee which is predicted for the
-        * next step, and apo_predict is the apogee altitude,
-        * assuming the flaps are retracted for the rest of the flight.
-        * As long as this predicted altitude is greater than the target,
-        * it is desirable to lower it for this timestep, so the flaps
-        * are opened. Otherwise, opening the flaps this step will cause the
-        * vehicle to brake too hard, so the flaps are closed.
-        */
-
         const uint8_t vmin = 8; // minimum velocity for flap control
 
         major_status = APOGEE_COAST;
