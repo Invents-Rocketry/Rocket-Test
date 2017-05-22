@@ -2,6 +2,7 @@
 #include "Vehicle.h"                // for rocket vehicle characteristics
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <stdint.h>
 
 /* FLIGHT STATE DEFINITIONS */
@@ -34,20 +35,10 @@ void update_time(double* current_time, double* dt)
     currenttime += NOMINAL_DT;
 }
 
-double getAcceleration(uint8_t measurements)
-{
-    return 20;
-}
-
-double getAltitude(uint8_t measurements)
-{
-    return 0;
-}
-
 int main()
 {
-    std::ifstream in_alt("alt");
-    std::ifstream in_accel("accel");
+    std::ifstream in_alt("altitude.csv");
+    std::ifstream in_accel("acceleration.csv");
     REST_ACCEL = 0;
     float raw_altitude;
     float raw_accel;
