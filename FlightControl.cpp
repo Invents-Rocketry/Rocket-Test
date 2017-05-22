@@ -64,11 +64,11 @@ int main()
     filter.P[1][1] = 100;
 
     double current_time = 0;
-
+    
+    std::cout << "time\traw alt\tk alt\traw accel\tk accel\tvel\ts1\ts2\n";
+    
     while(current_time < 20)
     {
-    
-    std::cout << current_time << std::endl;
     
     bool FLAP_STATE = false;
     static double alt_prev;
@@ -86,8 +86,8 @@ int main()
     double velocity = (altitude - alt_prev)/dt;
 
     // status indicators allow internal state to be recorded efficiently
-    uint8_t major_status = 100;
-    uint8_t minor_status = 0;
+    int major_status = 100;
+    int minor_status = 0;
     // stage-specific progression logic
     const uint8_t ticksToAdvance = 0.25/NOMINAL_DT;
     if (stage == ON_LAUNCHPAD)
@@ -161,15 +161,11 @@ int main()
         if (low_accel_count > ticksToAdvance) stage++;
         minor_status = FLAP_STATE;
         }
-        if (FLAP_STATE && FLIGHT_NUMBER)
-        {
-            // flaps.deploy();
-        }
-        else
-        {
-            // flaps.retract();
-        }
 
         alt_prev = altitude; // save previous altitude for faux derivative
+        
+        std::cout << current_time << "\t" << raw_altitude << "\t" << 
+            altitude << "\t" << raw_accel << "\t" << accel << "\t" << 
+            velocity << "\t" << major_status << "\t" << minor_status << "\n";
     }
 }
