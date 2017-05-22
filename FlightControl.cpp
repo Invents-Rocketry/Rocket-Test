@@ -70,7 +70,7 @@ int main()
 
     std::cout << "time\traw alt\tk alt\traw accel\tk accel\tvel\ts1\ts2\n";
 
-    while(!in_alt.fail() && !in_accel)
+    while(!in_alt.fail() && !in_accel.fail())
     {
       in_alt>>raw_altitude;
       in_accel>>raw_accel;
