@@ -36,7 +36,7 @@ void update_time(double* current_time, double* dt)
 
 double getAcceleration(uint8_t measurements)
 {
-    return 0;
+    return 20;
 }
 
 double getAltitude(uint8_t measurements)
@@ -67,7 +67,7 @@ int main()
     
     std::cout << "time\traw alt\tk alt\traw accel\tk accel\tvel\ts1\ts2\n";
     
-    while(current_time < 20)
+    while(current_time < 10)
     {
     
     bool FLAP_STATE = false;
@@ -163,9 +163,9 @@ int main()
         }
 
         alt_prev = altitude; // save previous altitude for faux derivative
-        
-        std::cout << current_time << "\t" << raw_altitude << "\t" << 
-            altitude << "\t" << raw_accel << "\t" << accel << "\t" << 
-            velocity << "\t" << major_status << "\t" << minor_status << "\n";
+            
+        printf("%5.2f\t%5.2f\t%5.2f\t%5.2f\t\t%5.2f\t%5.2f\t%d\t%d\n",
+            current_time, raw_altitude, altitude, raw_accel, accel,
+            velocity, major_status, minor_status);
     }
 }
